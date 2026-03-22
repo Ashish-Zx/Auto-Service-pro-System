@@ -57,7 +57,8 @@ CREATE TABLE mechanics (
     hire_date      DATE NOT NULL,
     hourly_rate    DECIMAL(8,2) NOT NULL CHECK (hourly_rate > 0),
     status         ENUM('available','busy','on_leave') DEFAULT 'available',
-    created_at     TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at     TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at     TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
 -- ============================================================
@@ -96,7 +97,8 @@ CREATE TABLE suppliers (
     phone          VARCHAR(15),
     address        TEXT,
     rating         DECIMAL(2,1) DEFAULT 0.0 CHECK (rating >= 0 AND rating <= 5),
-    created_at     TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at     TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at     TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
 -- ============================================================
@@ -112,6 +114,8 @@ CREATE TABLE parts (
     quantity_in_stock INT DEFAULT 0 CHECK (quantity_in_stock >= 0),
     reorder_level     INT DEFAULT 10,
     supplier_id       INT,
+    created_at        TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at        TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (supplier_id) REFERENCES suppliers(supplier_id)
         ON DELETE SET NULL
 );
@@ -130,6 +134,7 @@ CREATE TABLE appointments (
                      DEFAULT 'scheduled',
     notes            TEXT,
     created_at       TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at       TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (customer_id) REFERENCES customers(customer_id),
     FOREIGN KEY (vehicle_id) REFERENCES vehicles(vehicle_id)
 );
@@ -142,7 +147,7 @@ CREATE TABLE service_orders (
     order_id              INT AUTO_INCREMENT PRIMARY KEY,
     appointment_id        INT,
     vehicle_id            INT NOT NULL,
-    customer_id           INT NOT NULL,
+    customer_id           INT NOT NULL,                      -- Denormalized for query performance (avoids JOIN through vehicles)
     order_date            DATETIME DEFAULT CURRENT_TIMESTAMP,
     status                ENUM('pending','in_progress','completed','delivered','cancelled') 
                           DEFAULT 'pending',
@@ -154,6 +159,7 @@ CREATE TABLE service_orders (
     discount_amount       DECIMAL(10,2) DEFAULT 0.00,
     total_amount          DECIMAL(10,2) DEFAULT 0.00,       -- Derived Attribute
     notes                 TEXT,
+    updated_at            TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (appointment_id) REFERENCES appointments(appointment_id),
     FOREIGN KEY (vehicle_id) REFERENCES vehicles(vehicle_id),
     FOREIGN KEY (customer_id) REFERENCES customers(customer_id)
@@ -200,7 +206,7 @@ CREATE TABLE parts_used (
     order_id      INT NOT NULL,
     part_id       INT NOT NULL,
     quantity_used INT NOT NULL CHECK (quantity_used > 0),
-    unit_price    DECIMAL(10,2) NOT NULL,
+    unit_price    DECIMAL(10,2) NOT NULL,         -- Price snapshot at time of service (intentional — differs from parts.unit_price)
     FOREIGN KEY (order_id) REFERENCES service_orders(order_id) ON DELETE CASCADE,
     FOREIGN KEY (part_id) REFERENCES parts(part_id)
 );
@@ -217,6 +223,7 @@ CREATE TABLE payments (
     payment_method ENUM('cash','card','upi','bank_transfer') NOT NULL,
     transaction_ref VARCHAR(100),
     status         ENUM('pending','completed','refunded','failed') DEFAULT 'pending',
+    updated_at     TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (order_id) REFERENCES service_orders(order_id)
 );
 

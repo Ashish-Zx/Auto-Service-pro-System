@@ -267,8 +267,10 @@ CREATE TABLE audit_log (
     table_name  VARCHAR(50) NOT NULL,
     operation   ENUM('INSERT','UPDATE','DELETE') NOT NULL,
     record_id   INT,
+    user_id     INT,                                     -- ★ Connected to Users (New Relation) ★
     old_values  JSON,
     new_values  JSON,
     changed_by  VARCHAR(50) DEFAULT 'system',
-    changed_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    changed_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE SET NULL
 );

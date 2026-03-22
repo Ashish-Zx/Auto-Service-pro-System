@@ -1,11 +1,10 @@
 # 🏎️ Auto Service Pro: Advanced DBMS Workshop Management System
 
-[![Database](https://img.shields.io/badge/Database-TiDB%20Cloud-blue?style=for-the-badge&logo=mysql)](https://tidbcloud.com/)
+[![Database](https://img.shields.io/badge/Database-MySQL%20Local-blue?style=for-the-badge&logo=mysql)](https://www.mysql.com/)
 [![Backend](https://img.shields.io/badge/Backend-Node.js-green?style=for-the-badge&logo=node.js)](https://nodejs.org/)
 [![Frontend](https://img.shields.io/badge/Frontend-React%20v18-informational?style=for-the-badge&logo=react)](https://reactjs.org/)
-[![Status](https://img.shields.io/badge/Status-Project%20Complete-success?style=for-the-badge)](https://frontend-pearl-eight-26.vercel.app/)
 
-**Auto Service Pro** is a high-performance, enterprise-grade Workshop Management System designed to handle complex automotive service lifecycles. Built as a specialized **DBMS Project**, it demonstrates advanced database concepts including Transaction Management, Multi-table Joins, View Materialization, and Audit Logging.
+**Auto Service Pro** is a high-performance, local-first Workshop Management System designed to handle complex automotive service lifecycles offline. Built as a specialized **DBMS Project**, it demonstrates advanced database concepts including Transaction Management, Multi-table Joins, View Materialization, and Audit Logging.
 
 ---
 
@@ -42,7 +41,7 @@ Detailed historical tracking of every service ever performed for a client, power
 
 ## 🛠️ Tech Stack & Implementation
 
--   **Database**: TiDB Cloud (MySQL-Compatible Serverless SQL)
+-   **Database**: Local MySQL / MariaDB (Supports ACID Transactions)
 -   **Backend**: Node.js & Express with `mysql2/promise` for asynchronous IO.
 -   **Frontend**: React.js with Vite, styled with modern Vanilla CSS for premium aesthetics.
 -   **State Management**: React Hooks & Context for real-time UI updates.
@@ -53,10 +52,13 @@ Detailed historical tracking of every service ever performed for a client, power
 ## 🚀 Installation & Local Setup
 
 ### 1. Database Setup
-Ensure you have access to a TiDB or MySQL instance. Execute the scripts in `/database/` in the following order:
-1. `01_schema.sql`
-2. `02_initial_data.sql`
-3. `03_views.sql`
+Ensure you have a local instance of MySQL or MariaDB running. 
+1. Open your MySQL terminal or GUI (like MySQL Workbench).
+2. Execute the `local_db_setup.sql` script located in the root directory:
+   ```sql
+   source ./local_db_setup.sql;
+   ```
+   *This script automatically creates the database, tables, views, triggers, and populates sample data.*
 
 ### 2. Backend Setup
 ```bash

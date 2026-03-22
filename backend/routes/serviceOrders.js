@@ -185,7 +185,7 @@ router.post('/', async (req, res) => {
 
         const totalLabor = laborCost[0].total;
         const totalParts = partsCost[0].total;
-        const totalAmount = (parseFloat(totalLabor) + parseFloat(totalParts)) * 1.13; // 13% tax
+        const totalAmount = Math.round(((parseFloat(totalLabor) + parseFloat(totalParts)) * 1.13) * 100) / 100; // 13% tax
 
         console.log(`ORDER ${orderId} CALC: Labor=${totalLabor}, Parts=${totalParts}, Total=${totalAmount}`);
 

@@ -100,10 +100,19 @@ router.post('/feedback', async (req, res) => {
     try {
         const { order_id, rating, comments } = req.body;
         
-        // 1. Insert feedback
+        // 1. Get customer_id from service_order
+        const [[order_res]] = await db.execute('SELECT customer_id FROM service_orders WHERE order_id = ?', [order_id]);
+        
+        if (!order_res) {
+            return res.status(404).json({ error: 'Order not found' });
+        }
+
+        const customer_id = order_res.customer_id;
+
+        // 2. Insert feedback
         await db.execute(
-            'INSERT INTO feedback (order_id, rating, comments) VALUES (?, ?, ?)',
-            [order_id, rating, comments]
+            'INSERT INTO feedback (order_id, customer_id, rating, comments) VALUES (?, ?, ?, ?)',
+            [order_id, customer_id, rating, comments]
         );
 
         // 2. Audit Log

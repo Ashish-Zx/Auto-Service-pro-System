@@ -52,7 +52,8 @@ function OrderDetail() {
 
   useEffect(() => { fetchDetail(); }, [id]);
 
-  const handleComplete = async () => {
+  const handleComplete = async (e) => {
+    if (e) e.preventDefault();
     if (!window.confirm('Mark this order as completed and process final billing?')) return;
     setCompleting(true);
     try {
@@ -126,7 +127,7 @@ function OrderDetail() {
         </div>
         <div className="page-header-actions">
           {order.status === 'in_progress' && (
-            <button className="btn btn-primary" onClick={handleComplete} disabled={completing}>
+            <button type="button" className="btn btn-primary" onClick={handleComplete} disabled={completing}>
               {completing ? <><div className="spinner-sm" /> Completing…</> : <><RiCheckLine size={16} /> Mark Completed</>}
             </button>
           )}
@@ -189,7 +190,7 @@ function OrderDetail() {
               </thead>
               <tbody>
                 {lineItems.map(item => (
-                  <tr key={item.line_id}>
+                  <tr key={item.line_number}>
                     <td style={{ fontWeight: 600 }}>{item.service_name}</td>
                     <td>{item.quantity}</td>
                     <td>Rs.{parseFloat(item.unit_price).toLocaleString()}</td>
@@ -268,7 +269,7 @@ function OrderDetail() {
           <div className="section-card">
             <div className="section-label" style={{ marginBottom: 16 }}>Assigned Mechanic</div>
             {mechanics.map(m => (
-              <div key={m.assignment_id} style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+              <div key={m.mechanic_id} style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
                 <div style={{ width: 40, height: 40, borderRadius: 10, background: 'var(--bg-main)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--primary)', flexShrink: 0 }}>
                   <RiToolsLine size={18} />
                 </div>
@@ -286,8 +287,8 @@ function OrderDetail() {
           {payments && payments.length > 0 && (
             <div className="section-card">
               <div className="section-label" style={{ marginBottom: 12 }}>Payment</div>
-              {payments.map((pay, i) => (
-                <div key={i} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.875rem', padding: '6px 0', borderBottom: i < payments.length - 1 ? '1px solid var(--border-light)' : 'none' }}>
+              {payments.map((pay) => (
+                <div key={pay.payment_id} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.875rem', padding: '6px 0', borderBottom: '1px solid var(--border-light)' }}>
                   <span style={{ color: 'var(--text-muted)', textTransform: 'capitalize' }}>{pay.payment_method}</span>
                   <span style={{ fontWeight: 700, color: 'var(--text-heading)' }}>Rs.{parseFloat(pay.amount).toLocaleString()}</span>
                 </div>
